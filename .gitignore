@@ -1,0 +1,10 @@
+﻿vendor
+vendor/
+.idea
+.idea/
+nbproject
+nbproject/
+_*
+_*/
+.*
+.*/
