@@ -63,6 +63,8 @@ end try
 
 delay 0.2
 
+display notification "Processing..." with title "MacScriptable"
+
 -- Transcribe the recorded audio using OpenAI Whisper
 set whisperCommand to "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin; whisper " & scriptDir & "/_output.wav --output_dir " & scriptDir & " --language " & lang & " --model turbo --output_format txt --task transcribe >> " & scriptDir & "/_output.log"
 
@@ -94,6 +96,8 @@ removeFiles(scriptDir)
 -- Set the clipboard to the transcribed text
 set the clipboard to transcription
 
+display notification "Transcription in clipboard :-)" with title "MacScriptable"
+
 -- Paste the transcribed text into the current focused input
 tell application "System Events"
   tell application "System Events"
@@ -107,4 +111,6 @@ tell application "System Events"
 end tell
 
 log "Done..."
+
+
 
