@@ -32,7 +32,7 @@ end try
 log "ffmpegPID: " & ffmpegPID
 
 -- Show dialog with "Czech" and "English" buttons
-set userResponse to button returned of (display dialog "Speak now! Finally select a language to process the audio" buttons {"Czech", "English", "Close"} default button "Czech")
+set userResponse to button returned of (display dialog "Speak now!" & return & return & "Listening..." & return & return & "...select the spoken language to transcribe" buttons {"Czech", "English", "Close"} default button "Czech")
 
 -- Set the selected language into the variable
 set lang to userResponse
