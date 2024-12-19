@@ -32,7 +32,7 @@ end try
 log "ffmpegPID: " & ffmpegPID
 
 -- Show dialog with "Czech" and "English" buttons
-set userResponse to button returned of (display dialog "Speak now!" & return & return & "Listening..." & return & return & "...select the spoken language to transcribe" buttons {"Czech", "English", "Close"} default button "Czech")
+set userResponse to button returned of (display dialog "Speak now!" & return & return & "Listening..." & return & return & "...select the spoken language to transcribe" buttons {"cs", "en", "Close"} default button "cs")
 
 -- Set the selected language into the variable
 set lang to userResponse
@@ -63,10 +63,26 @@ end try
 
 delay 0.2
 
-display notification "Processing..." with title "MacScriptable"
+-- Check if openai.txt exists and read the API key
+set openaiFilePath to scriptDir & "/openai.txt"
+set useOpenAI to false
+set apiKey to ""
+try
+    set apiKey to do shell script "cat " & openaiFilePath
+    set useOpenAI to true
+on error
+    log "openai.txt not found, using local Whisper"
+end try
 
--- Transcribe the recorded audio using OpenAI Whisper
-set whisperCommand to "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin; whisper " & scriptDir & "/_output.wav --output_dir " & scriptDir & " --language " & lang & " --model turbo --output_format txt --task transcribe >> " & scriptDir & "/_output.log"
+if useOpenAI then
+    set whisperCommand to "curl -X POST https://api.openai.com/v1/audio/transcriptions -H 'Authorization: Bearer " & apiKey & "' -F file=@" & scriptDir & "/_output.wav -F model=whisper-1 -F language=" & lang & " -F response_format=text > " & scriptDir & "/_output.txt"
+
+    display notification "Processing with OpenAI API..." with title "MacScriptable"
+else
+    set whisperCommand to "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin; whisper " & scriptDir & "/_output.wav --output_dir " & scriptDir & " --language " & lang & " --model turbo --output_format txt --task transcribe >> " & scriptDir & "/_output.log"
+
+    display notification "Processing with local whisper..." with title "MacScriptable"
+end if
 
 log "Running transcribe..."
 try
